@@ -1,0 +1,322 @@
+<!-- <splash-screen [loading]="pageLoading"></splash-screen> -->
+<atb-modal [(visible)]="threadModal">
+  <div class="time-entry-modal">
+    <div class="top">
+      <div class="top-header">
+        <p><b>06:30 - 12:00</b></p>
+        <i class="edit-task far fa-edit clickable"></i>
+      </div>
+      <div class="time-entry-details">
+        <div class="working-on">
+          <p><b>Working on</b></p>
+          <p>{{ aTableUserEditing.task_id }}</p>
+        </div>
+        <div class="description">
+          <p><b>Description</b></p>
+          <p>not provided</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom">
+      <div *ngFor="let threadComment of threadComments" class="thread">
+        <div class="thread-details">
+          <div class="thread-author">
+            <img src="/assets/dragislava.svg" />
+            <p>
+              <b>{{ threadComment.user_profile.full_name }}</b>
+            </p>
+          </div>
+          <div class="thread-date">
+            <p>{{ threadComment.timestamp }}</p>
+          </div>
+        </div>
+        <div class="thread-comment">
+          <p>{{ threadComment.content }}</p>
+        </div>
+        <div class="thread-reply">
+          <p>0 replies</p>
+          <p class="reply-button clickable">reply</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="thread-input">
+      <input [(ngModel)]="enteredComment" placeholder="message" />
+      <img
+        (click)="addThreadComment()"
+        src="/assets/icons/send.svg"
+        class="clickable"
+      />
+    </div>
+    <div class="modal-buttons"></div>
+    <atb-button (click)="threadModal = !threadModal">Close modal</atb-button>
+  </div>
+</atb-modal>
+
+<atb-modal *ngIf="teamUsers.length > 0" [(visible)]="atableTimesModal">
+  <div class="atb-modal-precontent">
+    <div class="atb-modal-title">
+      Time
+    </div>
+
+    <div class="atb-modal-content">
+      <mat-form-field class="ml-0 mr-2">
+        <mat-label>Start Hrs</mat-label>
+        <mat-select
+          [(value)]="aTableUserEditing.start_time"
+          (valueChange)="
+            startTimeSelected(aTableUserEditing.start_time);
+            setEditingEntryLeftPosition()
+          "
+        >
+          <ng-container *ngFor="let time of startTimes">
+            <mat-option [value]="time">
+              {{ time }}
+            </mat-option>
+          </ng-container>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field class="mr-0">
+        <mat-label>End Hrs</mat-label>
+        <mat-select
+          [(value)]="aTableUserEditing.end_time"
+          (valueChange)="setEditingEntryRightPosition()"
+          [disabled]="endTimes.length < 1"
+        >
+          <mat-option *ngFor="let time of endTimes" [value]="time">
+            {{ time }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <br />
+
+      <mat-form-field class="w-100">
+        <mat-label>Working on (optional)</mat-label>
+        <mat-select
+          [(value)]="aTableUserEditing.task_id"
+          [disabled]="aTableUserEditId !== 'new'"
+        >
+          <mat-option [value]="null">No task</mat-option>
+          <mat-optgroup label="Assigned to you">
+            <ng-container *ngFor="let task of tasks">
+              <mat-option
+                *ngIf="task.users_assigned?.includes(user_id)"
+                [value]="task._id"
+                >{{ task.title }}</mat-option
+              >
+            </ng-container>
+          </mat-optgroup>
+
+          <mat-optgroup label="Others">
+            <ng-container *ngFor="let task of tasks">
+              <mat-option
+                *ngIf="!task.users_assigned?.includes(user_id)"
+                [value]="task._id"
+                >{{ task.title }}</mat-option
+              >
+            </ng-container>
+          </mat-optgroup>
+        </mat-select>
+      </mat-form-field>
+
+      <br />
+    </div>
+
+    <div class="atb-modal-footer">
+      <i
+        [style.visibility]="aTableUserEditId !== 'new' ? '' : 'hidden'"
+        (click)="removeAtableEntry()"
+        class="fas fa-trash mr-3 clickable"
+      ></i>
+
+      <div class="d-flex align-items-center">
+        <a
+          href="#"
+          class="a-button mr-3"
+          (click)="$event.preventDefault(); cancelEditAtableTime()"
+          >Cancel</a
+        >
+        <atb-button
+          (click)="saveAtableEntry()"
+          class="atb-small"
+          [disabled]="!aTableUserEditing.end_time"
+          >{{ aTableUserEditId === "new" ? "Save" : "Update" }}</atb-button
+        >
+      </div>
+    </div>
+
+    <!--    <div class="row no-gutters justify-content-between">-->
+    <!--      <button (click)="cancelEditAtableTime()" mat-stroked-button color="primary">Cancel</button>-->
+
+    <!--      <div class="d-flex align-items-center">-->
+    <!--        <i *ngIf="aTableUserEditId > -1" (click)="removeAtableEntry()" class="fas fa-trash mr-3 text-danger clickable"></i>-->
+    <!--        <button (click)="saveAtableEntry()" mat-stroked-button color="primary">{{aTableUserEditId === -1 ? 'Save' : 'Update'}}</button>-->
+    <!--      </div>-->
+    <!--    </div>-->
+  </div>
+</atb-modal>
+
+<div
+  #atable
+  class="atable atb-content-box overflow-auto custom-scrollbar"
+  [class.loading]="aTableLoading"
+>
+  <div #atableWrapper class="atable-wrapper">
+    <div class="a-row times-row">
+      <ng-container *ngFor="let time of times; let index = index">
+        <div
+          [id]="'t-' + time.hr"
+          class="a-col times-col"
+          (dragover)="dragOverTime($event, time.hr)"
+        >
+          <ng-container *ngIf="areMinutesZero(time.hr)">
+            <span
+              class="line"
+              [class.pointer-events-none]="aTableUserEditId"
+              [style.bottom]="aTableHeight"
+            ></span>
+
+            <p>{{ time.hr.split(":")[0] }}h</p>
+          </ng-container>
+
+          <!--          <span *ngIf="index === times.length - 1" class="line ending" [style.bottom]="aTableHeight"></span> -->
+        </div>
+      </ng-container>
+    </div>
+
+    <div
+      *ngFor="let user of teamUsers; trackBy: trackByItems"
+      class="a-row users-row"
+    >
+      <div class="user-info row no-gutters align-items-center">
+        <div
+          class="img-container mr-3 position-relative"
+          [satPopoverAnchor]="userPopover"
+          (mouseenter)="userPopover.open()"
+          (mouseleave)="userPopover.close()"
+        >
+          <sat-popover #userPopover horizontalAlign="before">
+            <span class="atb-tooltip">
+              {{ user.full_name.length > 0 ? user.full_name : user.username }}
+            </span>
+          </sat-popover>
+
+          <div class="status is_{{ user.isOnline }} position-absolute"></div>
+
+          <img
+            draggable="false"
+            [src]="
+              isMe(user)
+                ? currentUserProfile.getValue().profile_image
+                : getProfileImage(user._id)
+            "
+            (error)="$event.target.src = 'assets/dragislava.svg'"
+            (click)="openProfile(user._id)"
+            style="cursor: pointer;"
+          />
+        </div>
+      </div>
+
+      <div
+        class="user-details guide-line"
+        [class.loading]="aTableLoading"
+        [class.no-loading]="!aTableLoading"
+        [style.left]="'0px'"
+        [style.right]="'0px'"
+      ></div>
+
+      <!--      <ng-container *ngIf="user.atable_entries.length < 1">-->
+      <!--        <div-->
+      <!--             (click)="isMe(user) ? addAtableTime(user) : ''"-->
+      <!--             class="user-details"-->
+      <!--             [class.clickable]="isMe(user)"-->
+      <!--             [class.fadeAway]="aTableUserEditId"-->
+      <!--             [class.loading]="aTableLoading"-->
+      <!--             [class.no-loading]="!aTableLoading"-->
+      <!--             [style.left]="'0px'"-->
+      <!--             [style.right]="'0px'"-->
+      <!--             [class.no-time]="true"-->
+      <!--        >-->
+
+      <!--          <div class="left">-->
+      <!--            <ng-container *ngIf="!isMe(user)">-->
+      <!--              <p class="name bold-weight">{{user.username}} <span class="normal-weight">haven't added time yet</span></p>-->
+      <!--            </ng-container>-->
+
+      <!--            <ng-container *ngIf="isMe(user)">-->
+      <!--              <p class="name bold-weight">You <span class="normal-weight">haven't added time yet</span></p>-->
+      <!--            </ng-container>-->
+      <!--          </div>-->
+      <!--        </div>-->
+      <!--      </ng-container>-->
+
+      <ng-container *ngIf="user.atable_entries.length > 0">
+        <div
+          #userDetails
+          (click)="openTimeThread(atable._id)"
+          class="user-details justify-content-center align-items-center"
+          *ngFor="let atable of user.atable_entries; trackBy: trackByItems"
+          [class.clickable]="isMe(user)"
+          [class.fadeAway]="
+            atableTimesModal &&
+            aTableUserEditId &&
+            atable._id !== aTableUserEditId
+          "
+          [class.loading]="aTableLoading"
+          [class.no-loading]="!aTableLoading"
+          [style.left]="atable['leftPosition'] + 'px'"
+          [style.right]="atable['rightPosition'] + 'px'"
+          [class.hidden]="
+            (this.aTableUserEditId === atable._id &&
+              this.aTableUserEditId === 'new' &&
+              atable.start_time === '') ||
+            atable.end_time === ''
+          "
+          [satPopoverAnchor]="timePopover"
+          (mouseenter)="timePopover.open()"
+          (mouseleave)="timePopover.close()"
+        >
+          <sat-popover #timePopover horizontalAlign="after">
+            <div class="atb-tooltip">
+              <p class="m-0">
+                {{ atable.start_time + " - " + atable.end_time }}
+              </p>
+              <p class="m-0 font-weight-bold">
+                {{
+                  atable.assigned_task
+                    ? atable.assigned_task.title
+                    : "No task assigned"
+                }}
+              </p>
+              <hr
+                *ngIf="atable.description.length > 0"
+                style="border: 0; border-bottom: 1px solid #ffffff3b;"
+                class="m-0"
+              />
+              <p class="m-0">{{ atable.description }}</p>
+            </div>
+          </sat-popover>
+          <p class="count-time bold-weight">{{ countSumOfTime(atable) }}</p>
+          <!--          <i *ngIf="aTableUserEditId === atable._id" style="color: #b5b9bf;" class="fas fa-arrows-alt-h drag-animation"></i>-->
+
+          <!--          <div class="left">-->
+          <!--            <p *ngIf="atable.start_time.length > 0 && atable.end_time.length > 0 && (!lessThen3h(atable.start_time, atable.end_time))" class="start-time mr-3 ml-2 bold-weight">{{atable.start_time}}</p>-->
+
+          <!--            <ng-container *ngIf="!isMe(user)">-->
+          <!--              <p *ngIf="!lessThen4h(atable.start_time, atable.end_time)" class="name bold-weight">{{user.username}} <span *ngIf="atable.start_time.length < 1 || atable.end_time.length < 1" class="normal-weight">haven't added time yet</span></p>-->
+          <!--            </ng-container>-->
+
+          <!--            <ng-container *ngIf="isMe(user)">-->
+          <!--              <p *ngIf="!lessThen4h(atable.start_time, atable.end_time)" class="name bold-weight">You <span *ngIf="atable.start_time.length < 1 || atable.end_time.length < 1" class="normal-weight">haven't added time yet</span></p>-->
+          <!--            </ng-container>-->
+          <!--          </div>-->
+
+          <!--          <p *ngIf="atable.start_time.length > 0 && atable.end_time.length > 0" class="end-time mr-2 bold-weight">{{!lessThen3h(atable.start_time, atable.end_time) ? atable.end_time : lessThen3h(atable.start_time, atable.end_time) + 'h'}}</p>-->
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

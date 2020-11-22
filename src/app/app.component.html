@@ -1,0 +1,7 @@
+<div *ngIf="!isUserVerified.getValue() && isPageAuth()" class="verify-banner d-flex align-items-center w-100">
+    <span>Please follow the link in the email to verfiy your account </span>
+</div>
+<a [routerLink]="'auth/home'" style="position: fixed; bottom: 0px; left: 10px; z-index: 100">dev-panel</a>
+<div class="main-wrapper" [class.userNotActivated]="!isUserVerified.getValue()">
+    <router-outlet></router-outlet>
+</div>

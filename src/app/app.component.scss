@@ -1,0 +1,21 @@
+.verify-banner {
+    height: 35px;
+    padding: 0 40px;
+    color: white;
+    background: #2962ffba;
+    font-size: 14px;
+    z-index: 1000;
+}
+
+::ng-deep {
+    .main-wrapper.userNotActivated {
+        .team-select, .team-room, .team-update {
+            min-height: unset !important;
+            height: calc(100vh - 35px) !important;
+        }
+
+        .team-room .content {
+            height: calc(100vh - 155px);
+        }
+    }
+}

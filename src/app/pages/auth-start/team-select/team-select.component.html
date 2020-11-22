@@ -1,0 +1,66 @@
+<splash-screen [loading]="pageLoading"></splash-screen>
+
+<div class="team-select container-responsive">
+  <img draggable="false" src="assets/team-select-full.svg" class="img-background">
+
+  <atb-navigation #atbNav>
+      <ng-container navright>
+          <a href="#" class="navi-link">How it works</a>
+      </ng-container>
+  </atb-navigation>
+
+  <div class="content-box-wrapper d-flex justify-content-center">
+    <div class="atb-content-box welcome-back" [ngSwitch]=screen>
+      <ng-container *ngSwitchCase="'list'">
+      <p class="welcome-msg bold-weight">Welcome back, {{currentUserProfile.getValue().full_name.length > 0 ? currentUserProfile.getValue().full_name.split(' ')[0] : currentUserProfile.getValue().username}}</p>
+
+        <p class="pick-team-notice">pick a team or create new one</p>
+        
+        <div class="team-list">
+          <div class="row custom-scrollbar">
+            <div *ngFor="let team of teams" class="col-6 mb-3">
+              <p *ngIf="inviteUrl.length > 1" class="invite-url">http://{{inviteUrl}}</p>
+              <div (click)="openTeamRoom(team)" [class.bling-animation]="team['highlight_new']" class="transitions-all-05s clickable">
+                <atb-button (click)="openTeamRoom(team)" class="w-100">{{team.team_name}}</atb-button>
+              </div>
+            </div>
+            <!-- <div class="col-6 mb-4">
+                <atb-button type="outline">Team name</atb-button>
+            </div>
+            <div class="col-6 mb-4">
+                <atb-button type="outline">Team name</atb-button>
+            </div> -->
+            <div class="col-6 mb-4">
+              <atb-button (click)="createTeam()" color="gray" class="w-100"><i class="fas fa-plus"></i></atb-button>
+            </div>
+          </div>
+          <!-- <div class="row">
+              <div class="col-6">
+                  <atb-button type="outline">Team name</atb-button>
+              </div>
+              <div class="col-6">
+                  <atb-button type="outline_fill"><i class="fas fa-plus"></i></atb-button>
+              </div>
+          </div> -->
+        </div>
+      </ng-container>
+
+      <ng-container *ngSwitchCase="'create'">
+        <p class="welcome-msg bold-weight">Create a team</p>
+        <p class="pick-team-notice create-notice">pick a awesome nasty team name</p>
+
+        <mat-form-field style="width: 100%" class="team-name-input mb-2">
+          <input #teamNameInput matInput [(ngModel)]="newTeam.team_name" placeholder="Team name" autocomplete="off">
+          <mat-hint style="color: #949494; text-align: center" *ngIf="teamNameInput.value.length < 4">
+            name must be atleast 4 letters long
+          </mat-hint>
+        </mat-form-field>
+
+        <div class="row no-gutters create-buttons">
+          <atb-button (click)="cancelCreate()" color="gray">Cancel</atb-button>
+          <atb-button (click)="teamNameInput.value.length >= 4 ? createTeamServer() : null" [disabled]="teamNameInput.value.length < 4">Proceed</atb-button>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>

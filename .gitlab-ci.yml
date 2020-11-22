@@ -1,0 +1,16 @@
+deploy:plusrs:
+  image: node:10
+  stage: deploy
+  script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_INTREKS_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - npm install --progress=false
+    - npm run build
+    - scp -o stricthostkeychecking=no -r ./dist/* intreksc@intreks.com:/home/intreksc/atable.intreks.com
+  only:
+    - master
+    # variables:
+    #   - $CI_COMMIT_MESSAGE =~ /^#deploy.*$/

@@ -1,0 +1,93 @@
+.team-select {
+    position: relative;
+
+    min-width: 100vw;
+    height: 100vh;
+
+    overflow: hidden;
+
+    display: flex;
+    justify-content: center;
+    //align-items: center;
+
+    atb-navigation {
+        align-self: flex-start;
+
+        position: relative;
+    }
+
+    .team-list {
+      >.row {
+          // max-width: 550px;
+        overflow: auto;
+        height: 170px;
+      }
+
+      .invite-url {
+        position: absolute;
+        top: -30px;
+      }
+    }
+
+    .img-background {
+        position: absolute;
+        // right: -190px;
+        // top: -190px;
+        // bottom: 0px;
+        left: 0;
+        top: 0;
+        z-index: -20;
+        // height: 125%;
+        height: 100%;
+    }
+
+    .content-box-wrapper {
+      position: absolute;
+      top: calc(50vh - 25vh);
+      overflow: auto;
+      max-width: 500px;
+      width: 100%;
+      padding: 0 35px;
+    }
+
+    .atb-content-box.welcome-back {
+        //position: absolute;
+
+        // max-width: 600px;
+        width: 100%;
+
+        height: 100%;
+        padding: 75px 60px;
+
+        .welcome-msg {
+            color: inherit;
+            font-size: 24px;
+            margin-bottom: 0px;
+        }
+
+        .pick-team-notice {
+            font-size: 14px;
+            color: inherit;
+            margin-bottom: 100px;
+
+            &.create-notice {
+                margin-bottom: 70px;
+            }
+        }
+
+        ::ng-deep atb-button {
+            p.text {
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                overflow: hidden;
+            }
+            // max-width: 150px;
+        }
+
+        .create-buttons {
+            atb-button:first-child {
+                margin-right: 30px;
+            }
+        }
+    }
+}

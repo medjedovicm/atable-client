@@ -1,0 +1,11 @@
+{
+    "dest": "release-builds/",
+    "icon": "./src/assets/icons/atable_icon.ico",
+    "categories": [
+      "Utility"
+    ],
+    "lintianOverrides": [
+      "changelog-file-missing-in-native-package"
+    ],
+    "description": "aTable Desktop App for Linux Distributions"
+  }

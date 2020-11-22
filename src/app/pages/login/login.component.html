@@ -1,0 +1,40 @@
+<div class="login-page">
+    <div class="container">
+        <div class="row no-gutters">
+            <div class="header-container mobile">
+                <div class="container">
+                   <app-header></app-header>
+                </div>
+            </div>
+        </div>
+        <div class="row content justify-content-center">
+            <div class="col-6 d-lg-block d-none">
+                <p class="description">Get in <span class="schd-underline">sync</span> with your team, <span class="schd-underline">define</span> tasks and get task <span class="schd-underline">estimates</span></p>
+            </div>
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="sign-form" (keyup.enter)="login()">
+                    <p class="heading"> Sign In</p>
+
+                    <mat-form-field style="width: 100%">
+                        <input [(ngModel)]="email" type="username" matInput placeholder="email" autocomplete="off">
+                        <i matSuffix class="fas fa-user"></i>
+                    </mat-form-field>
+
+                    <mat-form-field style="width: 100%; margin-bottom: 10px">
+                        <input [(ngModel)]="password" type="password" matInput placeholder="password">
+                        <i matSuffix class="fas fa-key"></i>
+                    </mat-form-field>
+
+                    <p class="login-error" [class.hidden]="loginError === 'noerr'">{{loginError}}</p>
+                    <div style="margin-bottom: 30px" class="row no-gutters justify-content-center">
+                        <atb-button (click)="login()" [disabled]="loginLoading || email.length < 1 || password.length < 1"><mat-spinner *ngIf="loginLoading" diameter="30" color="warn"></mat-spinner> {{loginLoading ? '' : 'Sign In'}}</atb-button>
+                    </div>
+
+                    <div class="row no-gutters justify-content-center register-link">
+                        <p>You don't have account? <a (click)="$event.preventDefault()" routerLink="/register">Register</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

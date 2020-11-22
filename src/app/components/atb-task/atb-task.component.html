@@ -1,0 +1,356 @@
+<div class="task atb-content-box">
+  <ng-container *ngIf="router.url.includes('list')">
+    <div *ngIf="tasks.length > 0" class="header row no-gutters">
+      <div class="col-3">
+        <p class="teammate">Teammate</p>
+      </div>
+      <div class="col">
+        <p class="task-name">Task Name</p>
+      </div>
+    </div>
+
+    <div class="task-list custom-scrollbar">
+      <div
+        *ngFor="let task of tasks"
+        (click)="navigateToTaskDetail(task._id)"
+        class="task-item row no-gutters"
+      >
+        <div class="col-3 d-flex align-items-center">
+          <div class="img-container">
+            <img
+              *ngIf="task.users_assigned.length > 1"
+              draggable="false"
+              src="assets/people.svg"
+              (error)="$event.target.src = 'assets/dragislava.svg'"
+              class="mr-3"
+            />
+            <img
+              *ngIf="task.users_assigned.length === 1"
+              draggable="false"
+              src="{{ task.user_profiles[0].profile_image | imageUrl }}"
+              (error)="$event.target.src = 'assets/dragislava.svg'"
+              class="mr-3"
+            />
+            <img
+              *ngIf="task.users_assigned.length < 1"
+              draggable="false"
+              src="assets/dragislava.svg"
+              class="mr-3"
+            />
+          </div>
+
+          <p class="user-name">
+            {{
+              task.users_assigned.length > 0
+                ? task.users_assigned.length > 1
+                  ? "Multiple"
+                  : task.user_profiles[0].full_name.length > 0
+                  ? task.user_profiles[0].full_name
+                  : task.user_profiles[0].username
+                : "Unassigned"
+            }}
+          </p>
+        </div>
+        <div class="col d-flex justify-content-between align-items-center">
+          <p class="taskname">{{ task.title }}</p>
+
+          <div class="task-stats d-flex align-items-center">
+            <div class="stat-icon d-flex align-items-center">
+              {{ task.comment_count }}
+              <i class="fas fa-comment ml-1"></i>
+            </div>
+
+            <div class="stat-icon d-flex align-items-center">
+              {{ task.spent_hours }}
+              <i class="fas fa-clock ml-1"></i>
+            </div>
+
+            <div class="stat-icon copy-task-url d-flex align-items-center">
+              <button
+                (click)="
+                  $event.stopPropagation(); copyTaskUrl(task, copiedTooltip)
+                "
+                [satPopoverAnchor]="copiedTooltip"
+                mat-icon-button
+              >
+                <i class="fas fa-copy ml-1"></i>
+              </button>
+
+              <sat-popover
+                #copiedTooltip
+                horizontalAlign="center"
+                verticalAlign="above"
+              >
+                <span class="atb-tooltip">
+                  Copied!
+                </span>
+              </sat-popover>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        *ngIf="tasks.length < 1"
+        class="d-flex flex-column justify-content-center align-items-center w-100 h-100"
+      >
+        <img style="width: 70px;" class="mb-3" src="assets/empty-basic.svg" />
+        No tasks
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!router.url.includes('list')">
+    <div class="title-row d-flex align-items-center">
+      <i (click)="closeTaskDetail()" class="fas fa-times atb-icon-button"></i>
+
+      <p class="task-title">{{ taskDetail.title }}</p>
+    </div>
+
+    <div class="content-row d-flex">
+      <div class="col d-flex flex-column position-relative">
+        <i (click)="onEditTaskClick()" class="edit-task far fa-edit"></i>
+
+        <p class="desc-title description">Description</p>
+
+        <div
+          class="task-description mb-0 flex-grow-1"
+          [innerHTML]="taskDetail.description"
+        ></div>
+
+        <!-- <div class="buttons-row d-flex align-items-center justify-content-between">
+                    <atb-button color="red" class="atb-small">Delete Task</atb-button>
+
+                    <div class="d-flex ml-auto align-items-center">
+                        <a href="#" class="a-button mr-3" (click)="$event.preventDefault(); onCancelTaskClick()">Cancel</a>
+                        <atb-button class="atb-small">Create</atb-button>
+                    </div>
+                </div> -->
+      </div>
+
+      <div class="col-4 p-0 d-flex flex-column">
+        <div class="d-flex mb-4 px-3">
+          <div class="mr-5">
+            <p class="desc-title mb-2">Time Spent</p>
+            <p class="desc-info mb-0">{{ taskDetail.spent_hours }} h</p>
+            <!-- <p class="clickable">VIEW LOG</p> -->
+          </div>
+
+          <div>
+            <p class="desc-title mb-2">Assigned</p>
+            <div class="img-container assigness">
+              <img
+                *ngFor="let user of taskDetail.user_profiles"
+                (click)="goToUserProfile(user._id)"
+                title="{{
+                  user.full_name.length > 0 ? user.full_name : user.username
+                }}"
+                draggable="false"
+                class="mr-3"
+                src="{{ user.profile_image | imageUrl }}"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div
+          style="height: calc(100% - 60px);"
+          class="flex-grow-1 d-flex flex-column"
+        >
+          <p class="desc-title px-3">Comments</p>
+
+          <div class="atb-chat flex-grow-1">
+            <div
+              *ngIf="isTaskCommentsLoading"
+              class="w-100 d-flex justify-content-center mt-1"
+            >
+              <mat-spinner diameter="20"></mat-spinner>
+            </div>
+
+            <div
+              *ngIf="taskComments.length < 1 && !isTaskCommentsLoading"
+              class="w-100 d-flex justify-content-center mt-1"
+            >
+              <p class="no-msg-notice m-0">Be first to comment</p>
+            </div>
+
+            <div *ngFor="let comment of taskComments" class="chat-item">
+              <div class="row no-gutters">
+                <div class="col-auto image-col">
+                  <div class="img-container">
+                    <img
+                      draggable="false"
+                      src="{{ comment.user_profile?.profile_image | imageUrl }}"
+                      (error)="$event.target.src = 'assets/dragislava.svg'"
+                    />
+                  </div>
+                </div>
+
+                <div class="col">
+                  <div class="chat-msg-header d-flex justify-content-between">
+                    <p class="chat-name">
+                      {{
+                        comment.user_profile?.full_name.length > 0
+                          ? comment.user_profile?.full_name
+                          : comment.user_profile?.username
+                      }}
+                    </p>
+                    <p class="comment-time">
+                      {{ comment.timestamp | dateFormat: "MMM DD, HH:mm" }}
+                    </p>
+                  </div>
+                  <div class="chat-msg-content d-flex justify-content-between">
+                    <p class="chat-msg" [innerHTML]="comment.content"></p>
+
+                    <i class="fas fa-trash position-absolute"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-typing">
+            <div class="chat-divider"></div>
+            <div
+              class="chat-msg-type d-flex justify-content-between align-items-center"
+            >
+              <textarea
+                #commentInput
+                type="text"
+                placeholder="Type a comment"
+                [(ngModel)]="enteredComment"
+              ></textarea>
+
+              <img
+                draggable="false"
+                style="width: 25px;"
+                (click)="enteredComment.length > 0 ? postTaskComment() : null"
+                class="send-msg-icon user-select-none clickable"
+                [src]="
+                  commentInput.value.length > 0
+                    ? 'assets/icons/send_active.svg'
+                    : 'assets/icons/send.svg'
+                "
+                alt="send icon"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<atb-modal [(visible)]="taskModal" class="add-task-modal">
+  <div class="atb-modal-precontent">
+    <div class="atb-modal-title">
+      Task
+    </div>
+
+    <div class="atb-modal-content">
+      <mat-form-field class="w-100 mb-3">
+        <mat-label>Task name</mat-label>
+        <input matInput [(ngModel)]="editingTask.title" autocomplete="off" />
+      </mat-form-field>
+
+      <editor
+        class="w-100"
+        initialValue="<p>Task description</p>"
+        apiKey="lh375c3k8t18non28tui7cbby3slk7gxl6xb4bw75vnw7ynq"
+        [(ngModel)]="editingTask.description"
+        [init]="{
+          height: 450,
+          menubar: false,
+          resize: false,
+          content_style: 'p {margin: 0}',
+          plugins: [
+            'advlist autolink lists link image charmap print',
+            'preview anchor searchreplace visualblocks code',
+            'fullscreen insertdatetime media table paste',
+            'help wordcount'
+          ],
+          toolbar:
+            'undo redo | formatselect | bold italic | \
+            alignleft aligncenter alignright alignjustify | \
+            bullist numlist outdent indent | help'
+        }"
+      ></editor>
+
+      <div class="user-assign mt-4 mb-3">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Assign users</mat-label>
+          <mat-select [(value)]="editingTask.users_assigned" multiple>
+            <mat-select-trigger class="d-flex">
+              {{ editingTask.users_assigned?.length > 0 ? "" : "Assign users" }}
+
+              <ng-container
+                *ngFor="let user of teamUserProfiles; let i = index"
+              >
+                <span
+                  *ngIf="editingTask.users_assigned?.includes(user._id)"
+                  style="display: inline-flex; align-items: center;"
+                  class="mr-3"
+                >
+                  <ng-container *ngIf="i < 2">
+                    <div class="img-container mr-2">
+                      <img
+                        style="width: 25px; height: 25px;"
+                        draggable="false"
+                        [src]="user.profile_image"
+                        (error)="$event.target.src = 'assets/dragislava.svg'"
+                      />
+                    </div>
+                    {{ user.full_name }}
+                  </ng-container>
+
+                  <ng-container
+                    *ngIf="editingTask.users_assigned?.length > 2 && i === 2"
+                  >
+                    (+{{ editingTask.users_assigned?.length - 2 }} other)
+                  </ng-container>
+                </span>
+              </ng-container>
+            </mat-select-trigger>
+
+            <mat-option
+              *ngFor="let user of teamUserProfiles"
+              [value]="user._id"
+            >
+              <div style="vertical-align: middle;" class="img-container mr-2">
+                <img
+                  style="width: 25px; height: 25px;"
+                  draggable="false"
+                  [src]="user.profile_image"
+                  (error)="$event.target.src = 'assets/dragislava.svg'"
+                />
+              </div>
+              {{ user.full_name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="atb-modal-footer">
+      <atb-button
+        (click)="deleteTask()"
+        [class.hidden]="router.url.includes('list')"
+        color="red"
+        class="atb-small"
+        >Delete Task</atb-button
+      >
+
+      <div class="d-flex align-items-center">
+        <a
+          href="#"
+          class="a-button mr-3"
+          (click)="$event.preventDefault(); onCancelTaskClick()"
+          >Cancel</a
+        >
+        <atb-button (click)="createTask()" class="atb-small">{{
+          router.url.includes("list") ? "Create" : "Update"
+        }}</atb-button>
+      </div>
+    </div>
+  </div>
+</atb-modal>

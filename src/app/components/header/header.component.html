@@ -1,0 +1,22 @@
+<div class="header" [class.open]="menuOpen">
+    <div class="row justify-content-between">
+        <div class="col-auto">
+            <a [href]="appUrl"> <img class="logo" src="assets/logo.svg" draggable="false" alt="aTable coworking smart task time prediction"> </a>
+        </div>
+        <div class="col-auto d-flex justify-content-center align-items-center d-md-none">
+            <i (click)="toggleMenu()" class="fas fa-bars menu-btn"></i>
+        </div>
+        <div class="nav-links col-auto d-sm-flex align-items-center d-none">
+            <a href="#" class="nav-link">Why aTable</a>
+            <a href="#" class="nav-link">Features</a>
+            <a href="#" class="nav-link">Blog</a>
+        </div>
+    </div>
+    <div class="row d-sm-none">
+        <div class="nav-links col-auto d-flex flex-column">
+            <a href="#" class="nav-link">Why aTable</a>
+            <a href="#" class="nav-link">Features</a>
+            <a href="#" class="nav-link">Blog</a>
+        </div>
+    </div>
+</div>

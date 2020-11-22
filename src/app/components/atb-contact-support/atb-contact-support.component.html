@@ -1,0 +1,23 @@
+<div (click)="openSupportModal()" class="support">
+  <p class="support-text">
+      SUPPORT
+  </p>
+</div>
+
+<atb-modal [visible]="supportModal">
+  <div class="atb-support-modal">
+    <div class="atb-modal-title">
+      Support
+    </div>
+    <div class="atb-modal-content">
+      <mat-form-field class="mat-form-field" appearance="outline">
+        <textarea matInput [(ngModel)]="issueText" rows="7" placeholder="Describe your issue"></textarea>
+      </mat-form-field>    
+    </div>
+    <div class="atb-modal-footer">
+      <a href="#" class="a-button mr-3" (click)="$event.preventDefault(); exitSupportModal()">Close</a>
+      <atb-button (click)="submitIssue()">Submit Issue</atb-button>  
+    </div>
+    <p class="response-message mt-3 pl-3 pr-3">{{responseStatusMessage}}</p>
+  </div>
+</atb-modal>

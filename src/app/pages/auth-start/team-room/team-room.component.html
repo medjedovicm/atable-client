@@ -1,0 +1,193 @@
+<splash-screen [loading]="!(atableReady && chatReady)"></splash-screen>
+
+<div class="team-room container-responsive">
+  <!--  <img draggable="false" src="assets/alone.svg" class="img-background">-->
+
+  <atb-navigation #atbNav>
+    <ng-container navright>
+      <a routerLink="/auth/team-select" class="navi-link"
+        ><i class="fas fa-arrow-left"></i>Teams</a
+      >
+      <a href="#" class="navi-link">Statistics</a>
+    </ng-container>
+  </atb-navigation>
+
+  <div class="row content no-gutters">
+    <div class="col-3 activity-col">
+      <div class="row no-gutters align-items-center activity-wrapper">
+        <p class="activity">Activity</p>
+      </div>
+
+      <atb-chat
+        #atbChat
+        [messages]="messages"
+        [loading]="!chatReady"
+        [teamUsersProfiles]="teamUsersProfiles"
+        [usersTyping]="team.isTyping"
+        (onChatReady)="chatReady = true"
+        (onLoadMore)="loadMoreMessages($event)"
+        (onSendMessage)="sendMessage($event)"
+        (focusin)="chatFocusIn()"
+        (focusout)="chatFocusOut()"
+        class="d-flex flex-column atb-content-box"
+      ></atb-chat>
+    </div>
+    <div class="col-9 hello-col">
+      <div
+        class="row no-gutters justify-content-between align-items-center hello-wrapper"
+      >
+        <div class="d-flex align-items-center">
+          <p class="hello">{{ team.team_name }}</p>
+          <atb-button
+            *ngIf="router.url.includes('atable')"
+            (click)="addAtableTime()"
+            color="black"
+            >Add Work Session</atb-button
+          >
+          <atb-button
+            *ngIf="router.url.includes('tasks/list')"
+            (click)="addTaskClick()"
+            color="black"
+            >Add Task</atb-button
+          >
+        </div>
+
+        <div
+          *ngIf="router.url.includes('atable')"
+          class="day-picker d-flex justify-content-center align-items-center"
+        >
+          <i
+            (click)="datePrev()"
+            class="fas fa-chevron-left atb-icon-button"
+          ></i>
+
+          <p
+            (click)="dp.isOpen ? dateGotoToday(dp) : dp.toggle()"
+            class="clickable"
+          >
+            <b>{{
+              !dp.isOpen
+                ? getCurrentDate()
+                : isDateToday(datePickerDate)
+                ? getCurrentDate()
+                : "Set Today"
+            }}</b>
+          </p>
+          <input
+            type="text"
+            style="position: absolute; visibility: hidden;"
+            placeholder="Datepicker"
+            class="form-control"
+            #dp="bsDatepicker"
+            [(bsValue)]="datePickerDate"
+            bsDatepicker
+            (bsValueChange)="onDateChange($event)"
+          />
+
+          <i
+            (click)="dateNext()"
+            class="fas fa-chevron-right atb-icon-button"
+          ></i>
+        </div>
+
+        <atb-button
+          *ngIf="
+            !(router.url.includes('tasks') && !router.url.includes('list'))
+          "
+          (click)="router.url.includes('task') ? openAtable() : openTasks()"
+          color="black"
+          >{{ router.url.includes("task") ? "aTable" : "Tasks" }}
+        </atb-button>
+      </div>
+
+      <!-- <atable
+          #atable
+          [team_id]="teamId"
+          [user_id]="user_id"
+          [tasks]="tasks"
+          [teamUsersProfiles]="teamUsersProfiles"
+          [currentDate]="currentDate"
+          [teamUsers]="teamUsersSelectedDate"
+          (onAtableReady)="this.atableReady = true"
+          (onFetchUsers)="fetchTeamUsersByMonth()"
+          class="{{view === 'atable' ? 'd-flex' : 'd-none'}}"
+          ></atable> -->
+
+      <router-outlet></router-outlet>
+
+      <div
+        class="solo-notice text-center mt-5"
+        *ngIf="
+          router.url.includes('atable') && teamUsersSelectedDate.length < 2
+        "
+      >
+        <p class="head">
+          Share Invite URL with your colleagues<br />
+          to add them to atable
+        </p>
+
+        <atb-button
+          (click)="generateInviteUrl()"
+          color="black"
+          [disabled]="inviteCopied"
+        >
+          <i class="fas fa-user-plus mr-2"></i>
+          {{ inviteCopied ? "Copied" : "Get Invite URL" }}
+        </atb-button>
+      </div>
+      <div>
+        <atb-contact-support></atb-contact-support>
+      </div>
+      <atb-modal [(visible)]="modalTest">
+        <div class="time-entry-modal">
+          <div class="top-header">
+            <p><b>06:30 - 12:00 (4h 30m)</b></p>
+            <i class="edit-task far fa-edit clickable"></i>
+          </div>
+          <div class="time-entry-details">
+            <div class="working-on">
+              <p><b>Working on</b></p>
+              <p>fix modal etc...</p>
+            </div>
+            <div class="description">
+              <p><b>Description</b></p>
+              <p>not provided</p>
+            </div>
+          </div>
+          <div class="thread">
+            <div class="thread-details">
+              <div class="thread-author">
+                <img src="/assets/dragislava.svg" />
+                <p><b>Mihajlo Tintor</b></p>
+              </div>
+              <div class="thread-date">
+                <p>21.20.2020.</p>
+              </div>
+            </div>
+            <div class="thread-comment">
+              <p>jos nije gotovo bla bla bla</p>
+            </div>
+            <div class="thread-reply">
+              <p>0 replies</p>
+              <p class="reply-button clickable">reply</p>
+            </div>
+            <div class="thread-input">
+              <input placeholder="message" />
+              <img src="/assets/icons/send.svg" />
+            </div>
+          </div>
+
+          <div class="modal-buttons"></div>
+        </div>
+      </atb-modal>
+      <!-- <atb-task
+        #atbTask
+        [class.d-none]="view !== 'task'"
+        [tasks]="tasks"
+        [team_id]="teamId"
+        [user_id]="user_id"
+        (onFetchTasks)="fetchTasks()">
+      </atb-task> -->
+    </div>
+  </div>
+</div>

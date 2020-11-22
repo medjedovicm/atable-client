@@ -1,0 +1,90 @@
+<div class="atb-nav-left">
+    <a [routerLink]="'/auth/team-room/' + teamId"><img draggable="false" src="assets/logo.svg"></a>
+</div>
+
+<div class="atb-nav-middle">
+    <ng-content select="[navmiddle]"></ng-content>
+</div>
+
+<div class="atb-nav-right">
+    <ng-content select="[navright]"></ng-content>
+    <button (click)="toggleNotifications(); closeMenu()" *ngIf="routerUrl.includes('team-room')" mat-icon-button class="notification-bell position-relative">
+        <i *ngIf="unreadNotifications.length < 1" style="font-size: 19px;" class="far fa-bell"></i>
+        <i *ngIf="unreadNotifications.length > 0" style="font-size: 19px;" class="fas fa-bell"></i>
+
+        <div *ngIf="unreadNotifications.length > 0" style="top: 6px; right: -2px" class="unread-dot icon position-absolute"></div>
+    </button>
+    <img (click)="toggleMenu(); closeNotifications()" draggable="false" [src]="currentUserProfile.getValue().profile_image" (error)="$event.target.src = 'assets/dragislava.svg'" class="profim">
+</div>
+<!--   -->
+<div #atbNotificationsDropdown class="atb-menu-dropdown atb-notifications atb-content-box"  (focusout)="toggleNotifications();" [@menuVisibility]="notificationsOpen" tabindex="-1">
+    <div class="atb-notifications-title">
+        <p><strong>Notifications</strong></p>
+    </div>
+
+    <div *ngIf="notifications.length==0" class="no-notifications">
+        <img style="width: 50px;" class="mb-3" src="../../../assets/empty-basic.svg"/>
+        <p>No new notifications</p>
+    </div>
+    <div class="custom-scrollbar">
+        <ng-container *ngIf="notifications.length > 0">
+            <div class="notification-row">
+                <div *ngFor="let notification of notifications"(click)="notificationOnClick(notification)" [class.unread]="notification['isUnread']" class="notification">
+                    <div class="unread-line">
+                        <i class="fas fa-check" title="mark as read"></i>
+                    </div>
+                    <div class="w-100 d-flex justify-content-between">
+                        <div class="title d-flex">
+                            <div class="img-container mr-2">
+                                <img draggable="false" src="{{notification.user_profile?.profile_image | imageUrl}}" (error)="$event.target.src = 'assets/dragislava.svg'">
+                            </div>
+                            <span>{{notification.title}}</span>
+                        </div>
+                        <p class="text date">{{notification.timestamp | dateFormat:"MMM DD"}}</p>
+                    </div>
+                    <p *ngIf="!!notification.text" class="text">{{notification.text}}</p>
+                </div>
+            </div>
+  
+        </ng-container>
+    </div>
+</div>
+
+<div #atbMenuDropdown class="atb-menu-dropdown" [@menuVisibility]="menuOpen" (focusout)="toggleMenu()" tabindex="-1">
+    <div class="atb-content-box">
+        <div (click)="goToProfile()" class="row menu-item">
+            <div class="col-3">
+                <img draggable="false" [src]="currentUserProfile.getValue().profile_image" (error)="$event.target.src = 'assets/dragislava.svg'" class="profim-dropdown">
+            </div>
+            <div class="col">
+                Profile
+            </div>
+        </div>
+
+        <div class="row menu-item" [class.disabled]="isProduction">
+            <div class="col-3">
+                <i class="fas fa-cog"></i>
+            </div>
+            <div class="col">
+                Settings
+            </div>
+        </div>
+
+        <div (click)="generateInviteUrl()" *ngIf="showLink()" class="row menu-item" [class.disabled]="inviteCopied">
+            <div class="col-3">
+                <i class="fas fa-copy"></i>
+            </div>
+            <div class="col">
+                {{!inviteCopied ? 'Invite Link' : 'Copied'}}
+            </div>
+        </div>
+        <div (click)="logout()" class="row menu-item">
+            <div class="col-3">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <div class="col">
+                Logout
+            </div>
+        </div>
+    </div>
+</div>

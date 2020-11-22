@@ -1,0 +1,57 @@
+<div class="register-page">
+  <div class="container">
+    <div class="row no-gutters">
+        <div class="header-container mobile">
+            <div class="container">
+                <app-header></app-header>
+            </div>
+        </div>
+    </div>
+
+    <div class="row content justify-content-center">
+      <div class="col-6 d-lg-block d-none">
+        <p class="description">Sign up for a test phase of <span class="schd-underline">aTable</span></p>
+      </div>
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="sign-form" (keyup.enter)="register()">
+          <p class="heading"> Sign Up</p>
+
+          <mat-form-field style="width: 100%">
+            <input [(ngModel)]="username" type="username" matInput placeholder="username" autocomplete="off">
+            <i matSuffix class="fas fa-user"></i>
+          </mat-form-field>
+
+          <mat-form-field style="width: 100%">
+            <input [(ngModel)]="fullName" type="fullName" matInput placeholder="full name" autocomplete="off">
+            <i matSuffix class="fas fa-user"></i>
+          </mat-form-field>
+
+          <mat-form-field style="width: 100%; margin-bottom: 10px">
+            <input [(ngModel)]="email" type="email" matInput placeholder="email" autocomplete="off">
+            <i matSuffix class="fas fa-mail-bulk"></i>
+          </mat-form-field>
+          <mat-form-field style="width: 100%; margin-bottom: 10px">
+            <input [(ngModel)]="password" type="password" matInput placeholder="password">
+            <i matSuffix class="fas fa-key"></i>
+          </mat-form-field>
+
+          <!-- <p class="register-error" [class.hidden]="registerError === 'noerr'">{{registerError}}</p> -->
+          <p class="register-error mb-3" *ngFor="let error of errorsList" [class.hidden]="errorsList.length < 1">{{error}}</p>
+
+          <div style="margin-bottom: 30px" class="row no-gutters justify-content-center">
+            <atb-button
+              (click)="register()"
+              [disabled]="registerLoading || email.length < 1 || password.length < 1 || username.length < 1 || fullName.length < 1">
+              
+              <mat-spinner *ngIf="registerLoading" diameter="30"></mat-spinner> {{registerLoading ? '' : 'Sign Up'}}
+              
+            </atb-button>
+          </div>
+
+          <div class="row no-gutters justify-content-center login-link">
+            <p>Already have account? <a (click)="$event.preventDefault()" routerLink="/login">Login</a></p>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>

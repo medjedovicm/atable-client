@@ -1,0 +1,69 @@
+.team-update {
+    min-width: 100vw;
+    height: 100vh;
+
+    position: relative;
+
+    overflow: hidden;
+
+    // background: url("assets/teams.svg");
+}
+
+.img-background {
+    position: absolute;
+
+    // right: 90px;
+    // top: -210px;
+    // bottom: 0px;
+
+    top: -375px;
+    left: -460px;
+
+    z-index: -20;
+
+    height: 169%;
+}
+
+.alone-form-container {
+    position: absolute;
+    left: 35px;
+    top: 0;
+    right: 35px;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    // z-index: -5;
+
+    .alone-form {
+        padding: 75px 58px;
+        background: white;
+
+        box-shadow: 0px 5px 15px rgba(42, 41, 89, 0.15);
+        border-radius: 4px;
+
+        max-width: 740px;
+        width: 100%;
+
+        z-index: 50;
+
+        .alone-text {
+            color: #0A2240;
+            font-size: 38px;
+            margin-bottom: 83px;
+        }
+
+        .team-data {
+            width: 100%;
+        }
+
+        .team-buttons {
+            margin-top: 30px;
+
+            atb-button {
+                width: 100%;
+            }
+        }
+    }
+}

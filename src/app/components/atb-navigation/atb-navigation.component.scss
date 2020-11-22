@@ -1,0 +1,248 @@
+@import "../../../variables";
+
+:host {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    position: relative;
+
+    width: 100%;
+    padding: 14px 20px;
+
+    background: white;
+
+    box-shadow: 0px 5px 15px rgba(42, 41, 89, 0.15);
+    border-radius: 4px;
+
+    z-index: 110;
+
+    ::ng-deep {
+        .atb-nav-middle, .atb-nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .navi-link {
+            font-size: 16px;
+            color: #0A2240;
+            margin: 0 20px 0 0;
+            text-decoration: none;
+        }
+
+        .profim {
+            width: 40px;
+            height: 40px;
+
+            border-radius: 50%;
+
+            user-select: none;
+
+            cursor: pointer;
+        }
+    }
+
+    .atb-nav-left, .atb-nav-middle, .atb-nav-right {
+        display: flex;
+        align-items: center;
+    }
+}
+
+.unread-dot {
+    visibility: hidden;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    margin-right: 10px;
+    
+    &.icon {
+        visibility: visible;
+        background: #2962ff;
+    }
+}
+
+.unread-line {
+    position: absolute;
+    left: -17px;
+    height: 90%;
+    background: #2962ff96;
+    opacity: 0;
+    padding: 0 10px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    transition: all 0.2s ease-in-out;
+}
+
+.atb-nav-right {
+    .notification-bell {
+        margin-right: 20px;
+
+        &:hover {
+            color: $brandPrimary
+        }
+    }
+}
+
+.atb-menu-dropdown {
+    position: absolute;
+    min-width: 180px;
+
+    .atb-content-box {
+        padding: 15px 25px;
+    }
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.atb-menu-dropdown.atb-notifications {
+    &.atb-content-box {
+        max-width: 450px;
+        min-width: 270px;
+        max-height: 345px;
+        min-height: 80px;
+        padding: 15px 0;
+        padding-top: 0px;
+    }
+
+    .custom-scrollbar {
+        overflow: auto;
+        max-height: 300px;
+
+    }
+
+    .notification-row {
+        position: relative;
+        top: 0;
+    }
+    .no-notifications {
+        position: relative;
+        top: 15px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+
+        p {
+            font-size: 14px;
+        }
+    }
+
+
+    .atb-notifications-title {
+        padding: 10px 25px;
+        // position: absolute;
+        background-color: white;
+        width: 100%;
+        // top: 0;
+        // z-index: 2;
+        border-bottom: 1px solid #f4f4f4;
+        p {
+            margin: 0 !important;
+        }
+    }
+
+
+    .notification {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        
+        padding: 10px 25px 10px 25px;
+        cursor: default;
+        position: relative;
+
+        &:not(:last-child) {
+            border-bottom: 1px solid #00000014;
+        }
+
+        &:hover {
+            transition: 0.3s;
+            color: $brandPrimary;
+            opacity: 0.8;
+            cursor: pointer;
+        }
+
+        // .unread-dot {
+        //     position: absolute;
+        //     left: -5px;
+        // }
+
+        .unread-line {
+            .fa-check {
+                position: absolute;
+                color: white;
+                font-size: 10px;
+
+                transition: all 0.2s ease-in-out;
+            }
+        }
+
+        &.unread {
+            .unread-line {
+                opacity: 1;
+            }
+        }
+
+        .title {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .text {
+            margin: 0;
+            margin-left: 27px;
+            color: #9e9e9e;
+            font-size: 15px;
+
+            white-space: pre-wrap;
+            word-break: break-word;
+
+            &.date {
+                font-size: 13px;
+                margin-left: 20px;
+                margin-top: 4px;
+            }
+        }
+    }
+}
+
+.atb-menu-dropdown {
+    right: 0;
+    top: 85px;
+
+    .menu-item {
+        padding: 5px 0px;
+
+        user-select: none;
+        cursor: pointer;
+
+        &:hover {
+            color: $brandPrimary;
+        }
+    }
+
+    .profim-dropdown {
+        width: 20px;
+        height: 20px;
+
+        border-radius: 50%;
+        user-select: none;
+        cursor: pointer;
+    }
+}
+
+.img-container {
+    margin-top: 6px;
+
+    img {
+        width: 20px;
+        height: 20px;
+    }
+}

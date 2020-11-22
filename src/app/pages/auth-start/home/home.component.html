@@ -1,0 +1,44 @@
+<div class="container">
+  <div class="row">
+    <div class="col">
+      Hello loggedin user!
+    </div>
+  </div>
+
+  <div class="row">
+    <button (click)="logout()" mat-stroked-button color="accent" class="mr-5">
+      log out
+    </button>
+    <button (click)="goToATable()" mat-stroked-button color="accent">
+      aTable
+    </button>
+    <button
+      (click)="goToTeamsUpdate()"
+      mat-stroked-button
+      color="accent"
+      class="ml-5"
+    >
+      Team Update
+    </button>
+    <button
+      (click)="goToTeamSelect()"
+      mat-stroked-button
+      color="accent"
+      class="ml-5"
+    >
+      Team Select
+    </button>
+  </div>
+
+  <div style="margin-top: 50px;">
+    <ul class="list-group">
+      <li *ngFor="let user of users" class="list-group-item">
+        {{ user.username }} | {{ user.email }} | {{ user.working_time }}
+      </li>
+    </ul>
+  </div>
+  <div class="new-modal mt-5">
+    <h2>New Modal Style</h2>
+    <atb-thread-modal></atb-thread-modal>
+  </div>
+</div>

@@ -1,0 +1,157 @@
+<div
+  #atbChat
+  class="atb-chat"
+  (scroll)="chatScroll($event)"
+  (click)="chatDropdown.toggle(false)"
+>
+  <div *ngIf="loading" class="w-100 d-flex justify-content-center mt-1">
+    <mat-spinner diameter="20"></mat-spinner>
+  </div>
+
+  <div
+    *ngIf="!loading && messages.length < 1"
+    class="w-100 d-flex justify-content-center mt-1"
+  >
+    <p class="no-msg-notice m-0 mt-3">Hey I smell social anxiety here</p>
+  </div>
+
+  <div
+    *ngFor="let msg of messages; let index = index"
+    class="chat-item"
+    [class.grouped]="msg['groupMessage'] || index === 0"
+  >
+    <div class="row no-gutters">
+      <div *ngIf="!msg['groupMessage']" class="col-auto image-col">
+        <div class="img-container">
+          <img
+            draggable="false"
+            [src]="
+              msg['isMe']
+                ? currentUserProfile.getValue().profile_image
+                : msg['profileImage']
+            "
+            (error)="$event.target.src = 'assets/dragislava.svg'"
+          />
+        </div>
+      </div>
+
+      <div class="col" [class.grouped-content]="msg['groupMessage']">
+        <div
+          *ngIf="!msg['groupMessage']"
+          class="chat-msg-header d-flex justify-content-between"
+        >
+          <p class="chat-name" [class.user-me]="msg['isMe']">
+            {{
+              msg["isMe"]
+                ? "You"
+                : msg.full_name?.length > 0
+                ? msg.full_name
+                : msg.username
+            }}
+          </p>
+
+          <p
+            *ngVar="msg.timestamp | chatTimeElapsed as timeElapsed"
+            [class.just-now]="timeElapsed === 'Just now'"
+            class="chat-timestamp"
+          >
+            {{ timeElapsed }}
+          </p>
+        </div>
+        <div class="chat-msg-content d-flex justify-content-between">
+          <p class="chat-msg" [innerHTML]="msg.content"></p>
+
+          <i
+            (click)="openMsgOptions($event, msg); chatDropdown.toggle(true)"
+            class="msg-dropdown-toggler fas fa-ellipsis-v clickable align-self-start"
+          ></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    class="btn-group msg-dropdown-container"
+    [style.left]="chatDropdownX + 'px'"
+    [style.top]="chatDropdownY + 'px'"
+    dropdown
+    #chatDropdown="bs-dropdown"
+    placement="bottom left"
+    autoClose="true"
+  >
+    <ul
+      id="msg-dropdown"
+      *dropdownMenu
+      class="dropdown-menu"
+      role="menu"
+      aria-labelledby="button-basic"
+    >
+      <div class="msg-info d-flex justify-content-center">
+        {{ msgDropdownDate }}
+      </div>
+      <li *ngIf="msgDropdown['isMe']" role="menuitem">
+        <a class="dropdown-item" href="#" (click)="$event.preventDefault()"
+          >Edit</a
+        >
+      </li>
+      <li *ngIf="msgDropdown['isMe']" class="divider dropdown-divider"></li>
+      <li *ngIf="msgDropdown['isMe']" role="menuitem">
+        <a
+          class="dropdown-item text-danger"
+          href="#"
+          (click)="$event.preventDefault(); deleteMessageModalToggle(null)"
+          >Remove</a
+        >
+      </li>
+    </ul>
+  </div>
+  <atb-modal [visible]="confirmDeleteMessage">
+    <div class="atb-support-modal">
+      <div class="atb-modal-title">Delete Message</div>
+      <div class="atb-modal-content">
+        <p>Are you sure you want to delete message?</p>
+        <div class="confirm-message-delete">
+          <atb-button (click)="confirmMessageDelete()" color="red">Yes</atb-button>
+          <atb-button (click)="deleteMessageModalToggle()">No</atb-button>
+        </div>
+      </div>
+      <p class="response-message mt-3 pl-3 pr-3">{{ responseStatusMessage }}</p>
+    </div>
+  </atb-modal>
+</div>
+
+<div class="chat-typing">
+  <div *ngIf="usersTyping.length > 0 && !onlyMeTyping" class="is-typing">
+    <p>Someone is typing<span>.</span><span>.</span><span>.</span></p>
+  </div>
+
+  <div class="chat-divider"></div>
+  <div
+    class="chat-msg-type d-flex justify-content-between align-items-center"
+    [class.disabled]="loading"
+  >
+    <textarea
+      #messageInput
+      [(ngModel)]="message"
+      (input)="messageOnInput($event)"
+      (keydown.enter)="chatOnEnter($event)"
+      [style.height]="messageTextareaHeight"
+      (focus)="onFocus()"
+      type="text"
+      placeholder="Type a message"
+    ></textarea>
+
+    <img
+      (click)="sendMessage()"
+      draggable="false"
+      style="width: 25px"
+      class="send-msg-icon user-select-none clickable"
+      [src]="
+        message.length > 0
+          ? 'assets/icons/send_active.svg'
+          : 'assets/icons/send.svg'
+      "
+      alt="send icon"
+    />
+  </div>
+</div>

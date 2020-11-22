@@ -1,0 +1,43 @@
+
+@import '../../../variables';
+
+.support {
+    cursor: pointer;
+    background: #7ea0ff;
+    position: absolute;
+    bottom: 5px;
+    right: -35px;
+    padding: 55px 0 15px 0;
+    border-radius: 4px;
+    width: 30px;
+    transition: 0.5s;
+    .support-text {
+        margin: 0;
+        color: white;
+        transform: rotate(-90deg);
+    }
+
+    &:hover {
+        background: $brandPrimary
+    }
+}
+.supportModal {
+    width: 50% !important;
+}
+.atb-support-modal {
+    .atb-modal-content {
+
+        .mat-form-field {
+            min-width: 420px;
+        }
+
+        textarea {
+            resize: none !important;
+            width: 100%;
+        }
+    }
+    .response-message {
+        color: $brandPrimary;
+        text-align: center;
+    }
+}

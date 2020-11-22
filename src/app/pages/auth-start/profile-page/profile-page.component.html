@@ -1,0 +1,155 @@
+<splash-screen [loading]="!profileReady"></splash-screen>
+
+<div class="profile-page container-responsive">
+  <atb-navigation #atbNav>
+    <ng-container navright>
+      <a *ngIf="backToTeamId === null" [routerLink]="'/auth/team-select'" class="navi-link">Teams</a>
+      <a *ngIf="backToTeamId !== null" [routerLink]="'/auth/team-room/' + backToTeamId" class="navi-link">
+        <i class="fas fa-arrow-left"></i>
+        Team room
+      </a>
+    </ng-container>
+  </atb-navigation>
+
+  <div class="profile">
+    <div class="button-row d-flex justify-content-end">
+      <!-- <atb-button *ngIf="currentUserId === user_id" (click)="editProfile()">Edit</atb-button> -->
+      <button mat-icon-button *ngIf="currentUserId === user_id" (click)="editProfile()">
+        <i class="far fa-edit"></i>
+      </button>
+    </div>
+
+    <div class="atb-content-box position-relative">
+      <div class="d-flex justify-content-center">
+        <div (click)="currentUserId === user_id ? editProfile() : null" style="top: -58.5px" [class.can-edit]="currentUserId === user_id" class="profile-image-container preview d-flex justify-content-center align-items-center position-absolute">
+          <img class="profile-image" draggable="false" [src]="profileImagePreview ? profileImagePreview : 'assets/dragislava.svg'" (error)="$event.target.src = 'assets/dragislava.svg'" alt="Profile image">
+          <i *ngIf="currentUserId === user_id" style="font-size: 20px" class="fas fa-camera position-absolute"></i>
+        </div>
+      </div>
+
+      <div class="details-head row no-gutters">
+        <div class="col-4">
+          <p class="title">USER INFORMATION</p>
+
+          <div class="user-info row no-gutters">
+            <div class="col">
+              <p class="desc">First name</p>
+              <p class="data">{{userData.full_name.length > 0 ? userData.full_name.split(' ')[0] : userData.username || '--'}}</p>
+
+              <p class="desc">Last name</p>
+              <p class="data">{{userData.full_name.length > 0 ? userData.full_name.split(' ')[1] : userData.username || '--'}}</p>
+            </div>
+            <div class="col">
+              <p class="desc">Username</p>
+              <p class="data">{{userData.username || '--'}}</p>
+
+              <p class="desc">Last login</p>
+              <p class="data">{{lastLogin()}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-4 d-flex justify-content-center">
+          <p class="role position-relative d-flex justify-content-center">{{userData.role}} <span class="position-absolute">Role</span></p>
+        </div>
+        <div class="col-4">
+          <p class="title">PROFILE STATISTICS</p>
+
+          <div class="user-info row no-gutters">
+            <div class="col">
+              <p class="desc">Hours worked this month</p>
+              <p class="data">--</p>
+
+              <p class="desc">Tasks completed</p>
+              <p class="data">--</p>
+            </div>
+            <div class="col">
+              <p class="desc">Participant in teams</p>
+              <p class="data">--</p>
+
+              <p class="desc">Member since</p>
+              <p class="data">--</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<atb-modal class="atb-modal" [(visible)]="editModal">
+  <div class="atb-modal-precontent">
+    <div class="atb-modal-title">
+      Edit profile
+    </div>
+
+    <div class="atb-modal-content d-flex flex-column">
+      <input #profileImageInput type="file" accept="image/*" id="profileImageInput" class="d-none" (change)="profileImageChange($event)"/>
+      
+      <div *ngIf="croppingActive" style="min-height: 140px;" class="w-100 mb-2 d-flex justify-content-center align-items-center">
+        <div *ngIf="cropperLoading" style="z-index: 100;" class="spinner-border text-primary position-absolute" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+
+        <image-cropper
+              #imageCropper
+              style="width: 200px"
+              [imageChangedEvent]="imageChangedEvent"
+              [maintainAspectRatio]="true"
+              [aspectRatio]="1 / 1"
+              [resizeToWidth]="128"
+              format="png"
+              (imageCropped)="imageCropped($event)"
+              (imageLoaded)="imageLoaded()"
+              (cropperReady)="cropperReady()"
+              (loadImageFailed)="loadImageFailed()"
+        ></image-cropper>
+      </div>
+      
+      <div *ngIf="!croppingActive" (click)="profileImageInput.click()" style="max-width: 100px" class="profile-image-container edit mb-4 mx-auto clickable">
+        <img draggable="false" [src]="profileImagePreview ? profileImagePreview : imageCropped ? imageCropped : 'assets/dragislava.svg'" (error)="$event.target.src = 'assets/dragislava.svg'" class="profile-image w-100" alt="Profile image">
+        <i *ngIf="!imagePreviewLoading" style="font-size: 20px" class="fas fa-camera position-absolute"></i>
+        <div *ngIf="imagePreviewLoading" style="width: 80px; height: 80px;" class="spinner-border text-primary position-absolute" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Full name</mat-label>
+        <input [(ngModel)]="userData.full_name" matInput type="text" autocomplete="off">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+        <input [(ngModel)]="userData.role" matInput type="text" autocomplete="off">
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Username</mat-label>
+        <input [(ngModel)]="userData.username" matInput type="text" autocomplete="off" disabled readonly>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input [(ngModel)]="userData.email" matInput type="text" autocomplete="off" disabled readonly>
+      </mat-form-field>
+    </div>
+
+    <div class="atb-modal-footer">
+      <i style="visibility: hidden" class="fas fa-trash mr-3 clickable"></i>
+
+      <div class="d-flex align-items-center">
+        <a href="#" class="a-button mr-3" (click)="$event.preventDefault(); cancelEdit()">Cancel</a>
+        <atb-button (click)="saveProfile()" class="atb-small">Update</atb-button>
+      </div>
+    </div>
+
+    <!--    <div class="row no-gutters justify-content-between">-->
+    <!--      <button (click)="cancelEditAtableTime()" mat-stroked-button color="primary">Cancel</button>-->
+
+    <!--      <div class="d-flex align-items-center">-->
+    <!--        <i *ngIf="aTableUserEditId > -1" (click)="removeAtableEntry()" class="fas fa-trash mr-3 text-danger clickable"></i>-->
+    <!--        <button (click)="saveAtableEntry()" mat-stroked-button color="primary">{{aTableUserEditId === -1 ? 'Save' : 'Update'}}</button>-->
+    <!--      </div>-->
+    <!--    </div>-->
+  </div>
+</atb-modal>

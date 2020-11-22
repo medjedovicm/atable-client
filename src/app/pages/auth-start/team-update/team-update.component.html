@@ -1,0 +1,42 @@
+<splash-screen [loading]="pageLoading"></splash-screen>
+
+<div class="team-update container-responsive">
+    <img draggable="false" src="assets/alone.svg" class="img-background">
+
+    <atb-navigation #atbNav>
+        <ng-container navright>
+            <a href="#" class="navi-link">How it works</a>
+        </ng-container>
+    </atb-navigation>
+
+    <div class="alone-form-container">
+        <div class="alone-form">
+            <p class="alone-text">You shouldn't be alone.</p>
+
+            <div class="row">
+                <div class="col-6">
+                    <mat-form-field class="team-data">
+                        <input matInput [(ngModel)]="newTeam.team_name" placeholder="team name" autocomplete="off">
+                    </mat-form-field>
+                </div>
+                <div class="col-6">
+                    <mat-form-field class="team-data">
+                      <input matInput [(ngModel)]="joinTeamString" placeholder="insert invite link" autocomplete="off">
+                      <mat-hint style="color: #E74C3C; text-align: center" *ngIf="invalidInvitationUrl !== 'noerr'">
+                        {{invalidInvitationUrl}}
+                      </mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row team-buttons">
+                <div class="col-6">
+                    <atb-button (click)="createTeam()">Create a Team</atb-button>
+                </div>
+                <div class="col-6">
+                    <atb-button (click)="joinTeam()" color="gray">Join a Team</atb-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

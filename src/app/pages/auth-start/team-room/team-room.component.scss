@@ -1,0 +1,259 @@
+@import "./../../../../variables";
+
+.team-room {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.content {
+  height: calc(100vh - 120px);
+  margin-top: 25px;
+  padding-bottom: 20px;
+
+  ::ng-deep {
+    atb-chat {
+      height: 100%;
+      max-height: calc(100% - 70px);
+      flex: 1 1 auto;
+    }
+
+    atb-task {
+      max-height: calc(100% - 70px);
+      flex: 1 1 auto;
+    }
+
+    atable {
+      max-height: calc(100% - 70px);
+    }
+
+    .activity-wrapper {
+      min-height: 40px;
+      margin-bottom: 25px;
+
+      .activity {
+        margin: 0;
+      }
+    }
+
+    .activity-col {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .hello-wrapper {
+      min-height: 40px;
+      margin-bottom: 25px;
+      position: relative;
+
+      atb-button {
+        z-index: 100;
+      }
+
+      .hello {
+        margin: 0;
+        margin-right: 35px;
+      }
+
+      .day-picker {
+        p {
+          margin: 0 10px;
+          min-width: 200px;
+          text-align: center;
+
+          &:hover {
+            background: $brandGray;
+            border-radius: 5px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.img-background {
+  position: absolute;
+
+  // right: 90px;
+  // top: -210px;
+  // bottom: 0px;
+
+  top: -375px;
+  left: -460px;
+
+  z-index: -20;
+
+  height: 169%;
+}
+
+.activity,
+.hello {
+  font-family: "ProximaNovaSemiBold", sans-serif;
+  font-size: 24px;
+  line-height: 29px;
+  color: #0A2240;
+}
+
+.hello-col {
+  display: flex;
+  flex-direction: column;
+
+  height: 100%;
+  padding-left: 20px;
+}
+
+.solo-notice {
+  padding: 0 0;
+
+  .head {
+    margin-bottom: 20px;
+    font-size: 20px;
+  }
+
+  .invite-url-message {
+    display: flex;
+    margin-top: 15px;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+::ng-deep {
+  .bs-datepicker-container {
+    padding: 0 !important;
+  }
+
+  .bs-datepicker-head {
+    background-color: $brandPrimary !important;
+  }
+
+  .bs-datepicker-body table td.week span {
+    color: $brandPrimary !important;
+  }
+
+  .bs-datepicker-body table td span.selected,
+  .theme-green .bs-datepicker-body table td.selected span,
+  .theme-green .bs-datepicker-body table td span[class*="select-"]:after,
+  .theme-green .bs-datepicker-body table td[class*="select-"] span:after {
+    background-color: $brandPrimary !important;
+  }
+}
+
+.navi-link:hover {
+  color: $brandPrimary;
+}
+
+.navi-link i {
+  margin-right: 10px;
+}
+
+
+
+
+
+
+
+
+
+
+
+// MODAL -> move it to other component
+.time-entry-modal {
+  max-width: 450px;
+  margin: auto auto;
+  background: white;
+  border-radius: 5px;
+
+  .top-header {
+    background: #2962FF;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    border-radius: 5px 5px 0px 0px;
+
+    p {
+      margin: 0;
+    }
+  }
+
+  .time-entry-details {
+    background: #2962FF;
+    color: white;
+    display: flex;
+    justify-content: space-around;
+    padding: 15px;
+
+    p {
+      margin: 0
+    }
+  }
+
+  .thread {
+    p {
+      margin: 0;
+    }
+
+    width: 100%;
+    max-width: 320px;
+    margin: auto;
+    padding: 25px 0;
+
+    .thread-details {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+
+      .thread-author {
+        display: flex;
+        align-items: center;
+
+        p {
+          font-size: 18px;
+        }
+
+        img {
+          max-width: 35px;
+          margin-right: 10px;
+        }
+      }
+
+      .thread-date {
+        color: lightgray;
+      }
+    }
+
+    .thread-comment {
+      margin-bottom: 15px;
+    }
+
+    .thread-reply {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      margin-bottom: 15px;
+
+      .reply-button {
+        color: #2962FF;
+      }
+    }
+
+    .thread-input {
+      display: flex;
+      justify-content: space-between;
+      border: 1px solid lightgray;
+      border-radius: 4px;
+      padding: 5px;
+
+      input {
+        outline: none;
+        border: 0px;
+        width: 100%;
+      }
+    }
+  }
+}

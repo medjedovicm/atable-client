@@ -1,0 +1,40 @@
+.header {
+    overflow: hidden;
+    transition: all 0.3s ease-out;
+    height: 45px;
+
+    &.open {
+        height: 165px;
+    }
+
+    .menu-btn {
+        color: #2f2e41;
+        font-size: 23px;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .nav-links {
+        .nav-link {
+            color: #2F2E41;
+            font-family: "ProximaNovaSemiBold", sans-serif;
+            font-size: 16px;
+            letter-spacing: 0.04em;
+
+            &:last-child {
+                padding-right: 0;
+            }
+
+            &.login {
+                background: #0066FF;
+                border-radius: 6px;
+                color: white;
+                padding: 5px 30px;
+            }
+
+            &:hover {
+                color: #0066FF;
+            }
+        }
+    }
+}
