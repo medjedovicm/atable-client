@@ -75,4 +75,4 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 if you're interested to find out more, contact us at atable@intreks.com
 
-## Happy Coding
+## Happy Coding :rocket:
