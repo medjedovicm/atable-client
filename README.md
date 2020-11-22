@@ -12,7 +12,7 @@ Application supports real time chat, profile and team creation, tasks list and r
 Clone the repo:
 
 ```bash
-git clone git:repo
+git clone git@github.com:medjedovicm/atable-client.git
 ```
 
 Install dependencies:
